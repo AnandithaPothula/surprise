@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Open Your Surprise 💐</title>
+  <title>Open Your Surprise :^)</title>
   <style>
     body{
       margin:0;
@@ -57,14 +57,11 @@ document.getElementById("openBtn").addEventListener("click", function(){
   const song = document.getElementById("song");
   const lyricsEl = document.getElementById("lyrics");
 
-  // Open bouquet in new tab
-  window.open("https://digibouquet.vercel.app/bouquet/9a9a9f9f-0770-4563-a99c-e4efb5839a06", "_blank");
-
-  // Play song from 1:00 to 1:40
-  song.currentTime = 60;
+  // Play song first
+  song.currentTime = 60; // start at 1:00
   song.play().catch(err => console.log("Autoplay blocked:", err));
 
-  // Lyrics lines
+  // Lyrics array
   const lyrics = [
     "Because this is where I want to be",
     "Where it's so sweet and heavenly",
@@ -75,22 +72,18 @@ document.getElementById("openBtn").addEventListener("click", function(){
     "All my love"
   ];
 
-  // Timing: divide 40 sec equally among 7 lines (~5.7s each)
-  const durationPerLine = 5.7; // seconds
+  const durationPerLine = 40 / lyrics.length; // ~5.7 sec per line
   let currentLine = 0;
 
-  lyricsEl.innerText = "";
+  // Show lyrics
   lyricsEl.classList.add("show");
+  lyricsEl.innerText = lyrics[currentLine];
 
-  const interval = setInterval(() => {
-    if(currentLine < lyrics.length){
-      lyricsEl.innerText = lyrics[currentLine];
-      currentLine++;
-    } else {
-      // Loop back if you want
-      currentLine = 0;
-    }
-  }, durationPerLine * 1000);
+  const lyricsInterval = setInterval(()=>{
+    currentLine++;
+    if(currentLine >= lyrics.length) currentLine = 0;
+    lyricsEl.innerText = lyrics[currentLine];
+  }, durationPerLine*1000);
 
   // Loop audio from 1:00 to 1:40
   song.ontimeupdate = function(){
@@ -98,6 +91,11 @@ document.getElementById("openBtn").addEventListener("click", function(){
       song.currentTime = 60;
     }
   };
+
+  // Open bouquet after small delay (500ms)
+  setTimeout(()=>{
+    window.open("https://digibouquet.vercel.app/bouquet/9a9a9f9f-0770-4563-a99c-e4efb5839a06","_blank");
+  },500);
 
 });
 </script>
