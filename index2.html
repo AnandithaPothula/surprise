@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Special Bouquet 💐</title>
+  <style>
+    body{
+      margin:0;
+      height:100vh;
+      background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+      font-family:Arial, sans-serif;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      text-align:center;
+    }
+
+    #openBtn{
+      padding:15px 30px;
+      border:none;
+      background:#ff4d6d;
+      color:white;
+      font-size:18px;
+      border-radius:30px;
+      cursor:pointer;
+      margin-bottom:30px;
+    }
+
+    #lyrics{
+      font-size:22px;
+      color:#fff;
+      line-height:1.5;
+      max-width:600px;
+      opacity:0;
+      text-shadow: 1px 1px 10px #ff4d6d;
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .show{ opacity:1; }
+
+    .petal{
+      position:absolute;
+      width:20px;
+      height:20px;
+      background:radial-gradient(circle at center, #fff0ff 0%, #ff4d6d 100%);
+      border-radius:50%;
+      animation:floatPetal linear infinite;
+      pointer-events:none;
+    }
+
+    @keyframes floatPetal{
+      0% {transform: translateY(100vh) rotate(0deg); opacity:1;}
+      100% {transform: translateY(-50px) rotate(360deg); opacity:0;}
+    }
+
+    #bouquet{
+      position:relative;
+      z-index:5;
+    }
+
+    #bouquet img{
+      width:100px;
+      margin:10px;
+    }
+
+  </style>
+</head>
+<body>
+
+<h1>💐 Special Surprise For You</h1>
+<button id="openBtn">Open Bouquet 🎵</button>
+
+<div id="bouquet">
+  <!-- Add your flower images here -->
+  <img src="flower1.png" alt="flower">
+  <img src="flower2.png" alt="flower">
+</div>
+
+<p id="lyrics"></p>
+
+<audio id="song">
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+document.getElementById("openBtn").addEventListener("click", function(){
+
+  const song = document.getElementById("song");
+  const lyricsEl = document.getElementById("lyrics");
+
+  // Start music from 1:00
+  song.currentTime = 60;
+  song.play().catch(err => console.log("Autoplay blocked:", err));
+
+  // Lyrics array
+  const lyrics = [
+    "Because this is where I want to be",
+    "Where it's so sweet and heavenly",
+    "I'm giving you all my, giving you all my",
+    "Giving you all my love",
+    "Giving you all my, giving you all my",
+    "Giving you all my love",
+    "All my love"
+  ];
+
+  const durationPerLine = 40 / lyrics.length; // 40 seconds total
+  let currentLine = 0;
+
+  lyricsEl.classList.add("show");
+  lyricsEl.innerText = lyrics[currentLine];
+
+  // Cycle lyrics
+  setInterval(()=>{
+    currentLine++;
+    if(currentLine >= lyrics.length) currentLine = 0;
+    lyricsEl.style.opacity = 0;
+    setTimeout(()=>{
+      lyricsEl.innerText = lyrics[currentLine];
+      lyricsEl.style.opacity = 1;
+      lyricsEl.style.transform = `translateY(-${Math.random()*10}px)`;
+    }, 500);
+  }, durationPerLine*1000);
+
+  // Loop music from 1:00 to 1:40
+  song.ontimeupdate = function(){
+    if(song.currentTime >= 100) song.currentTime = 60;
+  };
+
+  // Petals animation
+  setInterval(()=>{
+    const petal = document.createElement("div");
+    petal.className = "petal";
+    petal.style.left = Math.random()*100 + "vw";
+    petal.style.width = petal.style.height = (10 + Math.random()*15) + "px";
+    petal.style.animationDuration = (5+Math.random()*5) + "s";
+    document.body.appendChild(petal);
+    setTimeout(()=> petal.remove(), 8000);
+  }, 500);
+
+});
+</script>
+
+</body>
+</html>
