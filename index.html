@@ -10,8 +10,9 @@
       justify-content:center;
       align-items:center;
       background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-      font-family:Arial;
+      font-family:Arial, sans-serif;
       text-align:center;
+      flex-direction:column;
     }
 
     button{
@@ -22,15 +23,19 @@
       font-size:18px;
       border-radius:30px;
       cursor:pointer;
+      margin-bottom:30px;
     }
 
     #lyrics{
-      margin-top:20px;
-      font-size:20px;
-      color:#ff4d6d;
+      font-size:22px;
+      color:#fff;
+      line-height:1.5;
+      max-width:600px;
       opacity:0;
-      transition: opacity 1s ease;
+      transition: opacity 1.5s ease;
+      text-shadow: 1px 1px 10px #ff4d6d;
     }
+
     .show{
       opacity:1;
     }
@@ -38,11 +43,9 @@
 </head>
 <body>
 
-<div>
-  <h1>💐 Special Surprise For You</h1>
-  <button id="openBtn">Open Bouquet 🎵</button>
-  <p id="lyrics"></p>
-</div>
+<h1>💐 Special Surprise For You</h1>
+<button id="openBtn">Open Bouquet 🎵</button>
+<p id="lyrics"></p>
 
 <audio id="song">
   <source src="song.mp3" type="audio/mpeg">
@@ -52,47 +55,47 @@
 document.getElementById("openBtn").addEventListener("click", function(){
 
   const song = document.getElementById("song");
-  const lyrics = document.getElementById("lyrics");
+  const lyricsEl = document.getElementById("lyrics");
 
-  // Start song from 1:00
+  // Open bouquet in new tab
+  window.open("https://digibouquet.vercel.app/bouquet/9a9a9f9f-0770-4563-a99c-e4efb5839a06", "_blank");
+
+  // Play song from 1:00 to 1:40
   song.currentTime = 60;
-  song.play().catch(err => console.log("Autoplay blocked, click allowed:", err));
+  song.play().catch(err => console.log("Autoplay blocked:", err));
 
-  // Open bouquet link after small delay
-  setTimeout(() => {
-    window.open("https://digibouquet.vercel.app/bouquet/9a9a9f9f-0770-4563-a99c-e4efb5839a06", "_blank");
-  }, 500);
+  // Lyrics lines
+  const lyrics = [
+    "Because this is where I want to be",
+    "Where it's so sweet and heavenly",
+    "I'm giving you all my, giving you all my",
+    "Giving you all my love",
+    "Giving you all my, giving you all my",
+    "Giving you all my love",
+    "All my love"
+  ];
 
-  // Lyrics and loop
+  // Timing: divide 40 sec equally among 7 lines (~5.7s each)
+  const durationPerLine = 5.7; // seconds
+  let currentLine = 0;
+
+  lyricsEl.innerText = "";
+  lyricsEl.classList.add("show");
+
+  const interval = setInterval(() => {
+    if(currentLine < lyrics.length){
+      lyricsEl.innerText = lyrics[currentLine];
+      currentLine++;
+    } else {
+      // Loop back if you want
+      currentLine = 0;
+    }
+  }, durationPerLine * 1000);
+
+  // Loop audio from 1:00 to 1:40
   song.ontimeupdate = function(){
-    if(song.currentTime >= 100){ // 1:40
-      song.currentTime = 60; // 1:00
-    }
-
-    let text = "";
-    if(song.currentTime >= 60 && song.currentTime < 70){
-      text = "Because this is where I want to be
-Where it's so sweet and heavenly
-";
-    }
-    else if(song.currentTime >= 70 && song.currentTime < 80){
-      text = "I'm giving you all my, giving you all my
-Giving you all my love";
-    }
-    else if(song.currentTime >= 80 && song.currentTime < 90){
-      text = "Giving you all my, giving you all my
-Giving you all my love";
-    }
-    else if(song.currentTime >= 90 && song.currentTime < 100){
-      text = "All my love ❤️";
-    }
-
-    if(lyrics.innerText !== text){
-      lyrics.classList.remove("show");
-      setTimeout(()=>{
-        lyrics.innerText = text;
-        lyrics.classList.add("show");
-      },100);
+    if(song.currentTime >= 100){
+      song.currentTime = 60;
     }
   };
 
