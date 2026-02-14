@@ -3,17 +3,6 @@
 <head>
   <title>Open Your Surprise 💐</title>
   <style>
-.lyrics{
-  margin-top:20px;
-  font-size:20px;
-  color:#ff4d6d;
-  opacity:0;
-  transition:opacity 1.5s ease;
-}
-.show{
-  opacity:1;
-}
-
     body{
       margin:0;
       height:100vh;
@@ -24,6 +13,7 @@
       font-family:Arial;
       text-align:center;
     }
+
     button{
       padding:15px 30px;
       border:none;
@@ -34,57 +24,80 @@
       cursor:pointer;
     }
 
-
+    #lyrics{
+      margin-top:20px;
+      font-size:20px;
+      color:#ff4d6d;
+      opacity:0;
+      transition: opacity 1s ease;
+    }
+    .show{
+      opacity:1;
+    }
   </style>
 </head>
 <body>
 
 <div>
   <h1>💐 Special Surprise For You</h1>
-  <button onclick="startSurprise()">Open Bouquet 🎵</button>
-<p id="lyrics" style="margin-top:20px; font-size:20px; color:#ff4d6d;"></p>
+  <button id="openBtn">Open Bouquet 🎵</button>
+  <p id="lyrics"></p>
 </div>
 
-<audio id="song" loop>
+<audio id="song">
   <source src="song.mp3" type="audio/mpeg">
 </audio>
 
-
 <script>
-function startSurprise(){
+document.getElementById("openBtn").addEventListener("click", function(){
+
   const song = document.getElementById("song");
   const lyrics = document.getElementById("lyrics");
 
+  // Start song from 1:00
   song.currentTime = 60;
-  song.play();
+  song.play().catch(err => console.log("Autoplay blocked, click allowed:", err));
 
-  // Open bouquet AFTER small delay
+  // Open bouquet link after small delay
   setTimeout(() => {
     window.open("https://digibouquet.vercel.app/bouquet/9a9a9f9f-0770-4563-a99c-e4efb5839a06", "_blank");
-  }, 1000);
-
-  // Check time every 500ms manually
-  setInterval(() => {
-
-    if (song.currentTime >= 100) {
-      song.currentTime = 60;
-    }
-
-    if (song.currentTime >= 60 && song.currentTime < 70) {
-      lyrics.innerText = "Your first lyric line 💖";
-    }
-    else if (song.currentTime >= 70 && song.currentTime < 80) {
-      lyrics.innerText = "Second line 🌸";
-    }
-    else if (song.currentTime >= 80 && song.currentTime < 90) {
-      lyrics.innerText = "Third line 💕";
-    }
-    else if (song.currentTime >= 90 && song.currentTime < 100) {
-      lyrics.innerText = "Last line ❤️";
-    }
-
   }, 500);
-}
+
+  // Lyrics and loop
+  song.ontimeupdate = function(){
+    if(song.currentTime >= 100){ // 1:40
+      song.currentTime = 60; // 1:00
+    }
+
+    let text = "";
+    if(song.currentTime >= 60 && song.currentTime < 70){
+      text = "Because this is where I want to be
+Where it's so sweet and heavenly
+";
+    }
+    else if(song.currentTime >= 70 && song.currentTime < 80){
+      text = "I'm giving you all my, giving you all my
+Giving you all my love";
+    }
+    else if(song.currentTime >= 80 && song.currentTime < 90){
+      text = "Giving you all my, giving you all my
+Giving you all my love";
+    }
+    else if(song.currentTime >= 90 && song.currentTime < 100){
+      text = "All my love ❤️";
+    }
+
+    if(lyrics.innerText !== text){
+      lyrics.classList.remove("show");
+      setTimeout(()=>{
+        lyrics.innerText = text;
+        lyrics.classList.add("show");
+      },100);
+    }
+  };
+
+});
 </script>
+
 </body>
 </html>
